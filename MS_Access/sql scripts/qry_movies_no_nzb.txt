@@ -1,0 +1,13 @@
+SELECT 
+    movies.ID, 
+    movies.download_date,
+    movies.series_id,  
+    movies.nzb_created,
+    movies.description, 
+    movies.filename, 
+    movies.password, 
+    movies.note
+FROM 
+    movies
+WHERE 
+    movies.nzb_created Is Null;
