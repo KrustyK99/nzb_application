@@ -3,8 +3,16 @@ import json
 from nzb_search_db_connection import nzb_search_connection
 
 class api_nzb_search:
+    """
+    This class handles searching the NZB Index API for NZB files.
+    """
     def __init__(self):
+        """
+        Initializes the api_nzb_search class.
 
+        Sets up the API key and request URL, checks the connection to the API server,
+        and checks the number of API calls made.
+        """
         self.api_key = "f995d8d5732bf73306aedb29a8a844618d0fda48f15b773377fb4e0227300a26"
         self.api_request = "https://api.nzbindex.com/api/v3/?key="
 
@@ -33,6 +41,16 @@ class api_nzb_search:
         print('--------------------------------------------')
     
     def create_nzb_file(self, collection_id, collection_name): 
+        """
+        Creates an NZB file for a given collection.
+
+        Parameters:
+        collection_id (int): The ID of the collection.
+        collection_name (str): The name of the collection.
+
+        Returns:
+        None
+        """
         if collection_id == 0:
             print(f'Problem with Collection. NZB file NOT saved.')
             return
@@ -52,6 +70,18 @@ class api_nzb_search:
             print(f'Problem with saving nzb file. Collection ID={collection_id}')
     
     def get_collection_id(self, movie_filename):
+        """
+        Retrieves the collection ID for a given movie filename.
+
+        This method makes an API call to NZBIndex's search endpoint with the movie filename as the query.
+        If a single result is found, it returns the ID of the result. If no results or multiple results are found, it returns 0.
+
+        Parameters:
+        movie_filename (str): The filename of the movie to search for.
+
+        Returns:
+        int:
+        """
         # search_string = 'psaMLqhbq03qrWLR8lYPeaMZJAIIAUJTRLsdvi64Z7adQB1lCon6fjT2fK7b6PiL'
         request_cmd = f'https://api.nzbindex.com/api/v3/search/?key={self.api_key}&q={movie_filename}'
 
@@ -72,6 +102,18 @@ class api_nzb_search:
             return 0
 
     def json_count(self, filename):
+        """
+        Counts the number of results for a given filename in the NZBIndex API.
+
+        This method makes an API call to NZBIndex's search endpoint with the filename as the query.
+        It then returns the number of results found.
+
+        Parameters:
+        filename (str): The filename to search for.
+
+        Returns:
+        int: The number of results found. If an error occurs, it will return None.
+        """
         request_cmd = f'https://api.nzbindex.com/api/v3/search/?key={self.api_key}&q={filename}'
         print(request_cmd)
         response = requests.get(request_cmd)
