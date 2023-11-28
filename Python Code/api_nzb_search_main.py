@@ -35,20 +35,21 @@ def submit():
     messagebox.showinfo("Submitted", f"NZB Date: {nzb_date}\nNZB Series: {nzb_series}")
 
 root = tk.Tk()
+root.configure(padx=10, pady=10)
 
-label_date = tk.Label(root, text="Enter NZB Date:")
-label_date.pack()
+label_date = tk.Label(root, text="Enter NZB Date:", font=('Arial', 14))
+label_date.grid(row=0, column=0, padx=10, pady=10)
 
-entry_date = tk.Entry(root)
-entry_date.pack()
+entry_date = tk.Entry(root, font=('Arial', 14))
+entry_date.grid(row=0, column=1, padx=10, pady=10)
 
-label_series = tk.Label(root, text="Enter NZB Series:")
-label_series.pack()
+label_series = tk.Label(root, text="Enter NZB Series:", font=('Arial', 14))
+label_series.grid(row=1, column=0, padx=10, pady=10)
 
-entry_series = tk.Entry(root)
-entry_series.pack()
+entry_series = tk.Entry(root, font=('Arial', 14))
+entry_series.grid(row=1, column=1, padx=10, pady=10)
 
-submit_button = tk.Button(root, text="Submit", command=submit)
-submit_button.pack()
+submit_button = tk.Button(root, text="Submit", command=submit, font=('Arial', 14))
+submit_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
 
 root.mainloop()
