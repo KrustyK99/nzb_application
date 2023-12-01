@@ -1,3 +1,4 @@
+from datetime import datetime
 from api_nzb_search import api_nzb_search
 from nzb_search_db_connection import nzb_search_connection
 import tkinter as tk
@@ -21,18 +22,27 @@ def main(nzb_date, nzb_series):
         try:
             collection_id = cls.get_collection_id(rw[3])
             print(f'0:{rw[0]}, 1:{rw[1]}, 5:{rw[5]}, 3:{rw[3]}, 4:{rw[4]}, Collection ID: {collection_id}')
-            nzb_filename = f'{rw[0]}-{rw[3]}'
+            date = rw[1].strftime("%m%d")
+            series = str(rw[5]).zfill(2)
+            nzb_filename = f'{date} {series} {rw[0]} {{{{{rw[4]}}}}}'
+            row_id = rw[0]
+            print(f'NZB Filename: {nzb_filename}')
             cls.create_nzb_file(collection_id, nzb_filename)
+            sql_update = 'UPDATE movies SET nzb_created=1 WHERE ID=?;' # api_nzb_search_02.sql
+            cur.execute(sql_update, (row_id,))
+            conn.commit()
             print(f'--------------------------------------------------------------')
         except Exception as e:
             print(f"An error occurred: {e}")
+    print(f'--------------------------- E N D ----------------------------')
     cur.close()
     conn.close()
 
 def submit():
     nzb_date = entry_date.get()
     nzb_series = entry_series.get()
-    messagebox.showinfo("Submitted", f"NZB Date: {nzb_date}\nNZB Series: {nzb_series}")
+    # messagebox.showinfo("Submitted", f"NZB Date: {nzb_date}\nNZB Series: {nzb_series}")
+    main(nzb_date, nzb_series)
 
 root = tk.Tk()
 root.configure(padx=10, pady=10)

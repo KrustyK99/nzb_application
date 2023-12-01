@@ -68,7 +68,7 @@ class api_nzb_search:
         print(f'File download API response code: {response.status_code}')
         
         try:
-            open_string = fr'C:\Projects\nzb-search\Python Code\api saved files\{collection_name}.nzb'
+            open_string = fr'C:\Projects\nzb_application\Python Code\api_saved\{collection_name}.nzb'
             print(f'NZB Filename: {open_string}')
             open(open_string, "wb").write(response.content)
             print(f'NZB file saved successfully.')
@@ -131,33 +131,4 @@ class api_nzb_search:
             # print(f'Number of objects in json:  {len(data["results"])}')
             return len(data["results"])
         except:
-            print(f'Problem counting objects in json.')
-        
-# def main():
-#     print(f'--------------------------- S T A R T ----------------------------------')
-
-#     # API Stuff
-#     cls = api_nzb_search()
-    
-#     # Database stuff
-#     cls_db_connection = nzb_search_connection(1)
-#     conn = cls_db_connection.create_connection()
-#     nzb_date = "2022-10-12"
-#     nzb_series = 7
-#     str_sql = f'SELECT m.ID, m.download_date, m.description, m.filename, m.password, m.series_id, m.note, m.nzb_created, m.nzb_exception, m.dl_comments, m.movie_type, m.movie_url FROM movies m WHERE ((m.download_date="{nzb_date}") AND (m.series_id={nzb_series}) AND (m.nzb_created Is Null) AND (m.nzb_exception Is Null));' # api_nzb_search_01.sql 
-#     cur = conn.cursor()
-#     cur.execute(str_sql)
-#     row = cur.fetchall()
-#     print(f'Number of records from Database: {cur.rowcount}')
-#     for rw in row:
-#         collection_id = cls.get_collection_id(rw[3])
-#         print(f'0:{rw[0]}, 1:{rw[1]}, 5:{rw[5]}, 3:{rw[3]}, 4:{rw[4]}, Collection ID: {collection_id}')
-#         nzb_filename = f'{rw[0]}-{rw[3]}'
-#         cls.create_nzb_file(collection_id, nzb_filename)
-#         print(f'--------------------------------------------------------------')
-#     cur.close
-
-#     print(f'---------------------------- E N D -----------------------------------')
-
-# if __name__ == '__main__':
-#     main()
+            print(f'Problem counting objects in json.')    
