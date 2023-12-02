@@ -24,7 +24,10 @@ def main(nzb_date, nzb_series):
             print(f'0:{rw[0]}, 1:{rw[1]}, 5:{rw[5]}, 3:{rw[3]}, 4:{rw[4]}, Collection ID: {collection_id}')
             date = rw[1].strftime("%m%d")
             series = str(rw[5]).zfill(2)
-            nzb_filename = f'{date} {series} {rw[0]} {{{{{rw[4]}}}}}'
+            if rw[4] is None:
+                nzb_filename = f'{date} {series} {rw[0]}'
+            else:
+                nzb_filename = f'{date} {series} {rw[0]} {{{{{rw[4]}}}}}'
             row_id = rw[0]
             print(f'NZB Filename: {nzb_filename}')
             cls.create_nzb_file(collection_id, nzb_filename)
