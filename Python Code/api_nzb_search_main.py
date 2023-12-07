@@ -3,16 +3,26 @@ from api_nzb_search import api_nzb_search
 from nzb_search_db_connection import nzb_search_connection
 import tkinter as tk
 from tkinter import messagebox
+from parameterreader import ParameterReader
+
+param_reader = ParameterReader("config.yaml")
+param_reader.read_file()
 
 def main(nzb_date, nzb_series):
     # API Stuff
     cls = api_nzb_search()
-    
-    # Database stuff
-    cls_db_connection = nzb_search_connection(1)
+
+    print(f'Database Type: {db_type}')
+        
+    # Database stuff (see class (nzb_search_connection) for db_type values and descriptions)
+        # 1 = mariaDB
+        # 2 = SQLite
+        # 3 = Business
+        # 4 = Business-sandbox
+    db_type = param_reader.get_parameter("database_type")
+
+    cls_db_connection = nzb_search_connection({db_type})
     conn = cls_db_connection.create_connection()
-    #nzb_date = "2022-10-12"
-    #nzb_series = 7
     str_sql = 'SELECT m.ID, m.download_date, m.description, m.filename, m.password, m.series_id, m.note, m.nzb_created, m.nzb_exception, m.dl_comments, m.movie_type, m.movie_url FROM movies m WHERE ((m.download_date=?) AND (m.series_id=?) AND (m.nzb_created Is Null) AND (m.nzb_exception Is Null));' # api_nzb_search_01.sql 
     cur = conn.cursor()
     cur.execute(str_sql, (nzb_date, nzb_series))
@@ -55,12 +65,18 @@ label_date.grid(row=0, column=0, padx=10, pady=10)
 
 entry_date = tk.Entry(root, font=('Arial', 14))
 entry_date.grid(row=0, column=1, padx=10, pady=10)
+entry_date.delete(0, tk.END)  # delete the current value
+default_date = param_reader.get_parameter("ui_default_date")
+entry_date.insert(0, default_date)  # insert the new value
 
 label_series = tk.Label(root, text="Enter NZB Series:", font=('Arial', 14))
 label_series.grid(row=1, column=0, padx=10, pady=10)
 
 entry_series = tk.Entry(root, font=('Arial', 14))
 entry_series.grid(row=1, column=1, padx=10, pady=10)
+entry_series.delete(0, tk.END)  # delete the current value
+default_sid = param_reader.get_parameter("ui_default_sid")
+entry_series.insert(0, default_sid)  # insert the new value
 
 submit_button = tk.Button(root, text="Submit", command=submit, font=('Arial', 14))
 submit_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
