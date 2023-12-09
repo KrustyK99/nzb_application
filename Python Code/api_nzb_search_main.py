@@ -11,9 +11,7 @@ param_reader.read_file()
 def main(nzb_date, nzb_series):
     # API Stuff
     cls = api_nzb_search()
-
-    print(f'Database Type: {db_type}')
-        
+       
     # Database stuff (see class (nzb_search_connection) for db_type values and descriptions)
         # 1 = mariaDB
         # 2 = SQLite
@@ -21,7 +19,7 @@ def main(nzb_date, nzb_series):
         # 4 = Business-sandbox
     db_type = param_reader.get_parameter("database_type")
 
-    cls_db_connection = nzb_search_connection({db_type})
+    cls_db_connection = nzb_search_connection(db_type)
     conn = cls_db_connection.create_connection()
     str_sql = 'SELECT m.ID, m.download_date, m.description, m.filename, m.password, m.series_id, m.note, m.nzb_created, m.nzb_exception, m.dl_comments, m.movie_type, m.movie_url FROM movies m WHERE ((m.download_date=?) AND (m.series_id=?) AND (m.nzb_created Is Null) AND (m.nzb_exception Is Null));' # api_nzb_search_01.sql 
     cur = conn.cursor()
