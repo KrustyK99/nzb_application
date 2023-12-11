@@ -6,7 +6,11 @@ from tkinter import messagebox
 from parameterreader import ParameterReader
 
 param_reader = ParameterReader("config.yaml")
-param_reader.read_file()
+
+try:
+    param_reader.read_file()    
+except Exception as e:
+    print(f'Problem reading the config file: {e}')
 
 def main(nzb_date, nzb_series):
     # API Stuff
@@ -31,17 +35,27 @@ def main(nzb_date, nzb_series):
             collection_id = cls.get_collection_id(rw[3])
             print(f'0:{rw[0]}, 1:{rw[1]}, 5:{rw[5]}, 3:{rw[3]}, 4:{rw[4]}, Collection ID: {collection_id}')
             date = rw[1].strftime("%m%d")
-            series = str(rw[5]).zfill(2)
+            series = str(rw[5]).zfill(2) 
+
+            # The following IF statement is to handle the case where there is no password.
             if rw[4] is None:
-                nzb_filename = f'{date} {series} {rw[0]}'
+                nzb_filename = f'{date} {series} {rw[0]}' # Filename where there is NO password.
             else:
-                nzb_filename = f'{date} {series} {rw[0]} {{{{{rw[4]}}}}}'
-            row_id = rw[0]
+                nzb_filename = f'{date} {series} {rw[0]} {{{{{rw[4]}}}}}' # Filename where there IS no password.
             print(f'NZB Filename: {nzb_filename}')
-            cls.create_nzb_file(collection_id, nzb_filename)
-            sql_update = 'UPDATE movies SET nzb_created=1 WHERE ID=?;' # api_nzb_search_02.sql
-            cur.execute(sql_update, (row_id,))
-            conn.commit()
+
+            # The method create_nzb_file resutrns a tuple (success, error)
+            success, error = cls.create_nzb_file(collection_id, nzb_filename) 
+            row_id = rw[0]
+            if not success:
+                print(f'Error occurred: {error}')
+                sql_update = 'UPDATE movies SET nzb_created=0 WHERE ID=?;' # api_nzb_search_02.sql
+                cur.execute(sql_update, (row_id,))
+                conn.commit()
+            else: 
+                sql_update = 'UPDATE movies SET nzb_created=1 WHERE ID=?;' # api_nzb_search_02.sql
+                cur.execute(sql_update, (row_id,))
+                conn.commit()
             print(f'--------------------------------------------------------------')
         except Exception as e:
             print(f"An error occurred: {e}")
