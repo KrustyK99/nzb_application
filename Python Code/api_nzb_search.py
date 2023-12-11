@@ -1,7 +1,15 @@
 import requests
 import json
 from nzb_search_db_connection import nzb_search_connection
+from parameterreader import ParameterReader
 import datetime
+
+pr = ParameterReader("config.yaml")
+
+try:
+    pr.read_file()
+except Exception as e: 
+    print(f'Problem reading the config file: {e}')
 
 class api_nzb_search:
     """
@@ -14,8 +22,8 @@ class api_nzb_search:
         Sets up the API key and request URL, checks the connection to the API server,
         and checks the number of API calls made.
         """
-        self.api_key = "f995d8d5732bf73306aedb29a8a844618d0fda48f15b773377fb4e0227300a26"
-        self.api_request = "https://api.nzbindex.com/api/v3/?key="
+        self.api_key = pr.get_parameter("api_key")
+        self.api_request = pr.get_parameter("api_request")
 
         print('--------------------------------------------')
         
@@ -57,25 +65,27 @@ class api_nzb_search:
         Returns:
         None
         """
-        if collection_id == 0:
-            print(f'Problem with Collection. NZB file NOT saved.')
-            return
 
-        request_cmd = f'https://api.nzbindex.com/api/v3/download/?key={self.api_key}&r[]={collection_id}'
-        print(f'File download API call: https://api.nzbindex.com/api/v3/download/?key={self.api_key}&r[]={collection_id}')
-
-        response = requests.get(request_cmd)
-        print(f'File download API response code: {response.status_code}')
-        
         try:
+            if collection_id == 0:
+                error_message = f'Problem with Collection. Collection ID = 0. If news header is a valid collection ID will be non-zero. NZB file cannot be created.'
+                return False, error_message
+
+            request_cmd = f'https://api.nzbindex.com/api/v3/download/?key={self.api_key}&r[]={collection_id}'
+            print(f'File download API call: https://api.nzbindex.com/api/v3/download/?key={self.api_key}&r[]={collection_id}')
+
+            response = requests.get(request_cmd)
+            print(f'File download API response code: {response.status_code}')
+
             open_string = fr'C:\Projects\nzb_application\Python Code\api_saved\{collection_name}.nzb'
             print(f'NZB Filename: {open_string}')
             open(open_string, "wb").write(response.content)
             print(f'NZB file saved successfully.')
+            return True, None
         except Exception as e:
             print(f'Problem with saving nzb file. Collection ID={collection_id}')
             print(e)
-            return
+            return False, str(e)
     
     def get_collection_id(self, movie_filename):
         """
