@@ -1,5 +1,5 @@
 database_type: 1
-ui_default_date: 2023-12-11
-ui_default_sid: 3
+ui_default_date: 2023-12-12
+ui_default_sid: 2
 api_key: f995d8d5732bf73306aedb29a8a844618d0fda48f15b773377fb4e0227300a26
 api_request: https://api.nzbindex.com/api/v3/?key=
