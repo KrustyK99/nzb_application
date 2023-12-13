@@ -69,6 +69,9 @@ def submit():
     # messagebox.showinfo("Submitted", f"NZB Date: {nzb_date}\nNZB Series: {nzb_series}")
     main(nzb_date, nzb_series)
 
+def text_capture():
+    print(f'Text Capture Initiated.')
+
 root = tk.Tk()
 root.configure(padx=10, pady=10)
 
@@ -92,5 +95,8 @@ entry_series.insert(0, default_sid)  # insert the new value
 
 submit_button = tk.Button(root, text="Submit", command=submit, font=('Arial', 14))
 submit_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
+
+capture_button = tk.Button(root, text="Capture", command=text_capture, font=('Arial', 14))
+capture_button.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
 
 root.mainloop()
