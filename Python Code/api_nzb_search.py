@@ -1,6 +1,5 @@
 import requests
 import json
-from nzb_search_db_connection import nzb_search_connection
 from parameterreader import ParameterReader
 import datetime
 
