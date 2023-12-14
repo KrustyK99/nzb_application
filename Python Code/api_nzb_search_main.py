@@ -71,8 +71,10 @@ def submit():
     main(nzb_date, nzb_series)
 
 def text_capture():
-    capture_date = param_reader.get_parameter("nzb_capture_date")
-    capture_sid = param_reader.get_parameter("nzb_capture_sid")
+    #capture_date = param_reader.get_parameter("nzb_capture_date")
+    #capture_sid = param_reader.get_parameter("nzb_capture_sid")
+    capture_date = entry_capture_date.get()
+    capture_sid = entry_capture_series.get()
     txt_capture = Filename_Password_Capture(1)
     txt_capture.database_upate(capture_date, capture_sid)
     print(f'Text Capture Initiated.')
@@ -80,8 +82,8 @@ def text_capture():
 root = tk.Tk()
 root.configure(padx=10, pady=10)
 
-label_date = tk.Label(root, text="Enter NZB Date:", font=('Arial', 14))
-label_date.grid(row=0, column=0, padx=10, pady=10)
+label_date = tk.Label(root, text="NZB Date:", font=('Arial', 14))
+label_date.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
 entry_date = tk.Entry(root, font=('Arial', 14))
 entry_date.grid(row=0, column=1, padx=10, pady=10)
@@ -89,8 +91,8 @@ entry_date.delete(0, tk.END)  # delete the current value
 default_date = param_reader.get_parameter("ui_default_date")
 entry_date.insert(0, default_date)  # insert the new value
 
-label_series = tk.Label(root, text="Enter NZB Series:", font=('Arial', 14))
-label_series.grid(row=1, column=0, padx=10, pady=10)
+label_series = tk.Label(root, text="NZB Series:", font=('Arial', 14))
+label_series.grid(row=1, column=0, padx=10, pady=10, sticky="w")
 
 entry_series = tk.Entry(root, font=('Arial', 14))
 entry_series.grid(row=1, column=1, padx=10, pady=10)
@@ -101,7 +103,23 @@ entry_series.insert(0, default_sid)  # insert the new value
 submit_button = tk.Button(root, text="Submit", command=submit, font=('Arial', 14))
 submit_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
 
+label_capture_date = tk.Label(root, text="Capture Date:", font=('Arial', 14), anchor="w", justify="left")
+label_capture_date.grid(row=3, column=0, padx=10, pady=10, sticky="w")
+entry_capture_date = tk.Entry(root, font=('Arial', 14))
+entry_capture_date.grid(row=3, column=1, padx=10, pady=10)
+default_entry_capture_date = param_reader.get_parameter("nzb_capture_date")
+entry_capture_date.delete(0, tk.END)  # delete the current value
+entry_capture_date.insert(0, default_entry_capture_date)  # insert the new value
+
+label_capture_sid = tk.Label(root, text="Capture Series:", font=('Arial', 14), anchor="w", justify="left")
+label_capture_sid.grid(row=4, column=0, padx=10, pady=10, sticky="w")
+entry_capture_series = tk.Entry(root, font=('Arial', 14))
+entry_capture_series.grid(row=4, column=1, padx=10, pady=10)
+default_entry_capture_series = param_reader.get_parameter("nzb_capture_sid")
+entry_capture_series.delete(0, tk.END)  # delete the current value
+entry_capture_series.insert(0, default_entry_capture_series)  # insert the new value
+
 capture_button = tk.Button(root, text="Capture", command=text_capture, font=('Arial', 14))
-capture_button.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
+capture_button.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
 
 root.mainloop()
