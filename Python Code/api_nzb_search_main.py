@@ -4,6 +4,7 @@ from nzb_search_db_connection import nzb_search_connection
 import tkinter as tk
 from tkinter import messagebox
 from parameterreader import ParameterReader
+from fn_pw_cap import Filename_Password_Capture
 
 param_reader = ParameterReader("config.yaml")
 
@@ -70,6 +71,10 @@ def submit():
     main(nzb_date, nzb_series)
 
 def text_capture():
+    capture_date = param_reader.get_parameter("nzb_capture_date")
+    capture_sid = param_reader.get_parameter("nzb_capture_sid")
+    txt_capture = Filename_Password_Capture(1)
+    txt_capture.database_upate(capture_date, capture_sid)
     print(f'Text Capture Initiated.')
 
 root = tk.Tk()
