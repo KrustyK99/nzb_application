@@ -31,6 +31,8 @@ def main(nzb_date, nzb_series):
     cur.execute(str_sql, (nzb_date, nzb_series))
     row = cur.fetchall()
     print(f'Number of records from Database: {cur.rowcount}')
+    write_to_status(f'Number of records from Database: {cur.rowcount}\n')
+
     for rw in row:
         try:
             collection_id = cls.get_collection_id(rw[3])
@@ -41,8 +43,10 @@ def main(nzb_date, nzb_series):
             # The following IF statement is to handle the case where there is no password.
             if rw[4] is None:
                 nzb_filename = f'{date} {series} {rw[0]}' # Filename where there is NO password.
+                write_to_status(f'ID: {rw[0]}, NO PW\n')
             else:
                 nzb_filename = f'{date} {series} {rw[0]} {{{{{rw[4]}}}}}' # Filename where there IS no password.
+                write_to_status(f'ID: {rw[0]}\n')
             print(f'NZB Filename: {nzb_filename}')
 
             # The method create_nzb_file resutrns a tuple (success, error)
@@ -63,6 +67,7 @@ def main(nzb_date, nzb_series):
     print(f'--------------------------- E N D ----------------------------')
     cur.close()
     conn.close()
+    write_to_status(f'--------------------------- E N D ----------------------------\n')
 
 def submit():
     nzb_date = entry_date.get()
@@ -77,7 +82,11 @@ def text_capture():
     capture_sid = entry_capture_series.get()
     txt_capture = Filename_Password_Capture(1)
     txt_capture.database_upate(capture_date, capture_sid)
-    print(f'Text Capture Initiated.')
+    print(f'Text Capture Completed.')
+    write_to_status(f'Text Capture Completed.\n')
+
+def write_to_status(text):
+    text_widget.insert(tk.END, text)
 
 root = tk.Tk()
 root.configure(padx=10, pady=10)
@@ -103,23 +112,30 @@ entry_series.insert(0, default_sid)  # insert the new value
 submit_button = tk.Button(root, text="Submit", command=submit, font=('Arial', 14))
 submit_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
 
+# New separator line
+separator = tk.Frame(root, height=3, bd=1, relief='sunken')
+separator.grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky='ew')
+
 label_capture_date = tk.Label(root, text="Capture Date:", font=('Arial', 14), anchor="w", justify="left")
-label_capture_date.grid(row=3, column=0, padx=10, pady=10, sticky="w")
+label_capture_date.grid(row=4, column=0, padx=10, pady=10, sticky="w")
 entry_capture_date = tk.Entry(root, font=('Arial', 14))
-entry_capture_date.grid(row=3, column=1, padx=10, pady=10)
+entry_capture_date.grid(row=4, column=1, padx=10, pady=10)
 default_entry_capture_date = param_reader.get_parameter("nzb_capture_date")
 entry_capture_date.delete(0, tk.END)  # delete the current value
 entry_capture_date.insert(0, default_entry_capture_date)  # insert the new value
 
 label_capture_sid = tk.Label(root, text="Capture Series:", font=('Arial', 14), anchor="w", justify="left")
-label_capture_sid.grid(row=4, column=0, padx=10, pady=10, sticky="w")
+label_capture_sid.grid(row=5, column=0, padx=10, pady=10, sticky="w")
 entry_capture_series = tk.Entry(root, font=('Arial', 14))
-entry_capture_series.grid(row=4, column=1, padx=10, pady=10)
+entry_capture_series.grid(row=5, column=1, padx=10, pady=10)
 default_entry_capture_series = param_reader.get_parameter("nzb_capture_sid")
 entry_capture_series.delete(0, tk.END)  # delete the current value
 entry_capture_series.insert(0, default_entry_capture_series)  # insert the new value
 
 capture_button = tk.Button(root, text="Capture", command=text_capture, font=('Arial', 14))
-capture_button.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
+capture_button.grid(row=6, column=0, columnspan=2, padx=10, pady=10)
+
+text_widget = tk.Text(root, height=10, width=30)
+text_widget.grid(row=7, column=0, columnspan=2, padx=10, pady=10, sticky='ew')
 
 root.mainloop()
