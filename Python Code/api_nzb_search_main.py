@@ -135,7 +135,15 @@ entry_capture_series.insert(0, default_entry_capture_series)  # insert the new v
 capture_button = tk.Button(root, text="Capture", command=text_capture, font=('Arial', 14))
 capture_button.grid(row=6, column=0, columnspan=2, padx=10, pady=10)
 
-text_widget = tk.Text(root, height=10, width=30)
-text_widget.grid(row=7, column=0, columnspan=2, padx=10, pady=10, sticky='ew')
+# Scrollbar widget for text_widget
+scrollbar = tk.Scrollbar(root)
+scrollbar.grid(row=7, column=2, pady=10, sticky='ns')
+
+# Text Widget to show status messages so user can see what is happening.
+text_widget = tk.Text(root, height=10, width=30, yscrollcommand=scrollbar.set)
+text_widget.grid(row=7, column=0, columnspan=2, padx=(10,0), pady=10, sticky='ew')
+
+# Configure the Scrollbar to scroll the Text widget
+scrollbar.config(command=text_widget.yview)
 
 root.mainloop()
