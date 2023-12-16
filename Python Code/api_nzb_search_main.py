@@ -109,62 +109,102 @@ def write_to_status(text):
     text_widget.insert(tk.END, text)
 
 root = tk.Tk()
-root.configure(padx=10, pady=10)
 
-label_date = tk.Label(root, text="NZB Date:", font=('Arial', 14))
+#root.configure(padx=10, pady=10)
+root.grid_columnconfigure(0, weight=1)
+root.grid_rowconfigure(0, weight=1)
+root.grid_rowconfigure(1, weight=1)
+root.grid_rowconfigure(2, weight=1)
+
+# Frame for nzb date and series
+frame_nzb = tk.Frame(root, bg="light blue")
+frame_nzb.grid(row=0, column=0, padx=10, pady=(10,5), sticky="nsew")
+frame_nzb.grid_columnconfigure(0, weight=1)
+frame_nzb.grid_columnconfigure(1, weight=1)
+frame_nzb.grid_rowconfigure(0, weight=1)
+
+# Frame for filename and password capture
+frame_capture = tk.Frame(root, bg="light green")
+frame_capture.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
+frame_capture.grid_columnconfigure(0, weight=1)
+frame_capture.grid_columnconfigure(1, weight=1)
+frame_capture.grid_rowconfigure(0, weight=1)
+
+# Frame for status messages
+frame_status = tk.Frame(root, bg="#D8BFD8")
+frame_status.grid(row=2, column=0, padx=10, pady=(5,10), sticky="nsew")
+frame_status.grid_columnconfigure(0, weight=1)
+frame_status.grid_rowconfigure(0, weight=1)
+
+# Label: NZB Date
+label_date = tk.Label(frame_nzb, text="NZB Date:", font=('Arial', 14), bg="light blue")
 label_date.grid(row=0, column=0, padx=10, pady=10, sticky="w")
-
-entry_date = tk.Entry(root, font=('Arial', 14))
-entry_date.grid(row=0, column=1, padx=10, pady=10)
+# Entry: NZB Date
+entry_date = tk.Entry(frame_nzb, font=('Arial', 14))
+entry_date.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
 entry_date.delete(0, tk.END)  # delete the current value
 default_date = param_reader.get_parameter("ui_default_date")
 entry_date.insert(0, default_date)  # insert the new value
 
-label_series = tk.Label(root, text="NZB Series:", font=('Arial', 14))
+# Label: NZB Series
+label_series = tk.Label(frame_nzb, text="NZB Series:", font=('Arial', 14), bg="light blue")
 label_series.grid(row=1, column=0, padx=10, pady=10, sticky="w")
-
-entry_series = tk.Entry(root, font=('Arial', 14))
-entry_series.grid(row=1, column=1, padx=10, pady=10)
+# Entry: NZB Series
+entry_series = tk.Entry(frame_nzb, font=('Arial', 14))
+entry_series.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
 entry_series.delete(0, tk.END)  # delete the current value
 default_sid = param_reader.get_parameter("ui_default_sid")
 entry_series.insert(0, default_sid)  # insert the new value
 
-submit_button = tk.Button(root, text="Submit", command=submit, font=('Arial', 14))
+# NZB Submit button
+submit_button = tk.Button(frame_nzb, text="Submit", command=submit, font=('Arial', 14))
 submit_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
 
 # New separator line
 separator = tk.Frame(root, height=3, bd=1, relief='sunken')
 separator.grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky='ew')
 
-label_capture_date = tk.Label(root, text="Capture Date:", font=('Arial', 14), anchor="w", justify="left")
+# Label: Capture Date
+label_capture_date = tk.Label(frame_capture, text="Capture Date:", font=('Arial', 14), anchor="w", justify="left", bg="light green")
 label_capture_date.grid(row=4, column=0, padx=10, pady=10, sticky="w")
-entry_capture_date = tk.Entry(root, font=('Arial', 14))
-entry_capture_date.grid(row=4, column=1, padx=10, pady=10)
+# Entry: Capture Date
+entry_capture_date = tk.Entry(frame_capture, font=('Arial', 14))
+entry_capture_date.grid(row=4, column=1, padx=10, pady=10, sticky="ew")
 default_entry_capture_date = param_reader.get_parameter("nzb_capture_date")
 entry_capture_date.delete(0, tk.END)  # delete the current value
 entry_capture_date.insert(0, default_entry_capture_date)  # insert the new value
 
-label_capture_sid = tk.Label(root, text="Capture Series:", font=('Arial', 14), anchor="w", justify="left")
+# Label: Capture Series
+label_capture_sid = tk.Label(frame_capture, text="Capture Series:", font=('Arial', 14), anchor="w", justify="left", bg="light green")
 label_capture_sid.grid(row=5, column=0, padx=10, pady=10, sticky="w")
-entry_capture_series = tk.Entry(root, font=('Arial', 14))
-entry_capture_series.grid(row=5, column=1, padx=10, pady=10)
+# Entry: Capture Series
+entry_capture_series = tk.Entry(frame_capture, font=('Arial', 14))
+entry_capture_series.grid(row=5, column=1, padx=10, pady=10, sticky="ew")
 default_entry_capture_series = param_reader.get_parameter("nzb_capture_sid")
 entry_capture_series.delete(0, tk.END)  # delete the current value
 entry_capture_series.insert(0, default_entry_capture_series)  # insert the new value
 
-capture_button = tk.Button(root, text="Capture", command=text_capture, font=('Arial', 14))
+capture_button = tk.Button(frame_capture, text="Capture", command=text_capture, font=('Arial', 14))
 capture_button.grid(row=6, column=0, columnspan=2, padx=10, pady=10)
 
+
+# Add label to status frame
+label_status = tk.Label(frame_status, text="Status Messages", font=('Arial', 12), bg="#D8BFD8")
+label_status.grid(row=0, column=0, padx=10, pady=(10,0), sticky="w")
+
 # Scrollbar widget for text_widget
-scrollbar = tk.Scrollbar(root)
-scrollbar.grid(row=7, column=2, pady=10, sticky='ns')
+scrollbar = tk.Scrollbar(frame_status)
+scrollbar.grid(row=1, column=2, padx=(0,10), pady=(6,10), sticky='ns')
 
 # Text Widget to show status messages so user can see what is happening.
-text_widget = tk.Text(root, height=10, width=30, yscrollcommand=scrollbar.set)
-text_widget.grid(row=7, column=0, columnspan=2, padx=(10,0), pady=10, sticky='nsew')
+text_widget = tk.Text(frame_status, height=10, width=40, yscrollcommand=scrollbar.set)
+text_widget.grid(row=1, column=0, columnspan=1, padx=(10,0), pady=(5,10), sticky='nsew')
+
+
 # Configure the text widget to expand with the window; both horizontally and vertically.
-root.grid_rowconfigure(7, weight=1)
-root.grid_columnconfigure(0, weight=1)
+
+# root.grid_rowconfigure(7, weight=1)
+# root.grid_columnconfigure(0, weight=1)
 
 # Configure the Scrollbar to scroll the Text widget
 scrollbar.config(command=text_widget.yview)
