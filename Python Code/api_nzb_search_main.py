@@ -33,9 +33,12 @@ def main(nzb_date, nzb_series):
     print(f'Number of records from Database: {cur.rowcount}')
     write_to_status(f'Number of records from Database: {cur.rowcount}\n')
 
+    counter = 0 # Counter for number of records processed.
+    counter_saved = 0 # Counter for number of files saved.
     for rw in row:
         try:
             collection_id = cls.get_collection_id(rw[3])
+            #0:ID, 1:download_date, 2:description, 3:filename, 4:password, 5:series_id, 6:note, 7:nzb_created, 8:nzb_exception, 9:dl_comments, 10:movie_type, 11:movie_url
             print(f'0:{rw[0]}, 1:{rw[1]}, 5:{rw[5]}, 3:{rw[3]}, 4:{rw[4]}, Collection ID: {collection_id}')
             date = rw[1].strftime("%m%d")
             series = str(rw[5]).zfill(2) 
@@ -43,31 +46,50 @@ def main(nzb_date, nzb_series):
             # The following IF statement is to handle the case where there is no password.
             if rw[4] is None:
                 nzb_filename = f'{date} {series} {rw[0]}' # Filename where there is NO password.
-                write_to_status(f'ID: {rw[0]}, NO PW\n')
+                success, error = cls.create_nzb_file(collection_id, nzb_filename) 
+                row_id = rw[0]
+                if not success:
+                    print(f'Error occurred: {error}')
+                    sql_update = 'UPDATE movies SET nzb_created=0 WHERE ID=?;' # api_nzb_search_02.sql
+                    cur.execute(sql_update, (row_id,))
+                    conn.commit()
+                    write_to_status(f'  ID: {rw[0]}, Error:{error}\n')
+                else: 
+                    sql_update = 'UPDATE movies SET nzb_created=1 WHERE ID=?;' # api_nzb_search_02.sql
+                    cur.execute(sql_update, (row_id,))
+                    conn.commit()
+                    counter_saved += 1
+                    write_to_status(f'  ID: {rw[0]}, nzb saved!\n')
+                print(f'--------------------------------------------------------------')
+                
             else:
                 nzb_filename = f'{date} {series} {rw[0]} {{{{{rw[4]}}}}}' # Filename where there IS no password.
-                write_to_status(f'ID: {rw[0]}\n')
+                success, error = cls.create_nzb_file(collection_id, nzb_filename)
+                row_id = rw[0]
+                if not success:
+                    print(f'Error occurred: {error}')
+                    sql_update = 'UPDATE movies SET nzb_created=0 WHERE ID=?;' # api_nzb_search_02.sql
+                    cur.execute(sql_update, (row_id,))
+                    conn.commit()
+                    write_to_status(f'  ID: {rw[0]}, Error:{error}\n')
+                else: 
+                    sql_update = 'UPDATE movies SET nzb_created=1 WHERE ID=?;' # api_nzb_search_02.sql
+                    cur.execute(sql_update, (row_id,))
+                    conn.commit()
+                    counter_saved += 1
+                    write_to_status(f'  ID: {rw[0]}, nzb saved!\n')
+                #write_to_status(f'ID: {rw[0]}\n')
             print(f'NZB Filename: {nzb_filename}')
-
-            # The method create_nzb_file resutrns a tuple (success, error)
-            success, error = cls.create_nzb_file(collection_id, nzb_filename) 
-            row_id = rw[0]
-            if not success:
-                print(f'Error occurred: {error}')
-                sql_update = 'UPDATE movies SET nzb_created=0 WHERE ID=?;' # api_nzb_search_02.sql
-                cur.execute(sql_update, (row_id,))
-                conn.commit()
-            else: 
-                sql_update = 'UPDATE movies SET nzb_created=1 WHERE ID=?;' # api_nzb_search_02.sql
-                cur.execute(sql_update, (row_id,))
-                conn.commit()
             print(f'--------------------------------------------------------------')
         except Exception as e:
             print(f"An error occurred: {e}")
-    print(f'--------------------------- E N D ----------------------------')
+        counter += 1
+    print(f'------------------------------- E N D -------------------------------')
     cur.close()
     conn.close()
-    write_to_status(f'--------------------------- E N D ----------------------------\n')
+        
+    write_to_status(f'Number of records processed: {counter}\nNumber of files saved: {counter_saved}\n-------------------- E N D --------------------\n')
+    
 
 def submit():
     nzb_date = entry_date.get()
@@ -75,9 +97,7 @@ def submit():
     # messagebox.showinfo("Submitted", f"NZB Date: {nzb_date}\nNZB Series: {nzb_series}")
     main(nzb_date, nzb_series)
 
-def text_capture():
-    #capture_date = param_reader.get_parameter("nzb_capture_date")
-    #capture_sid = param_reader.get_parameter("nzb_capture_sid")
+def text_capture():    
     capture_date = entry_capture_date.get()
     capture_sid = entry_capture_series.get()
     txt_capture = Filename_Password_Capture(1)
@@ -141,9 +161,16 @@ scrollbar.grid(row=7, column=2, pady=10, sticky='ns')
 
 # Text Widget to show status messages so user can see what is happening.
 text_widget = tk.Text(root, height=10, width=30, yscrollcommand=scrollbar.set)
-text_widget.grid(row=7, column=0, columnspan=2, padx=(10,0), pady=10, sticky='ew')
+text_widget.grid(row=7, column=0, columnspan=2, padx=(10,0), pady=10, sticky='nsew')
+# Configure the text widget to expand with the window; both horizontally and vertically.
+root.grid_rowconfigure(7, weight=1)
+root.grid_columnconfigure(0, weight=1)
 
 # Configure the Scrollbar to scroll the Text widget
 scrollbar.config(command=text_widget.yview)
+
+# Add button below the text widget to clear the text widget's contents
+button_clear = tk.Button(root, text="Clear", command=lambda: text_widget.delete(1.0, tk.END), font=('Arial', 14))
+button_clear.grid(row=8, column=0, columnspan=2, padx=10, pady=10)
 
 root.mainloop()
