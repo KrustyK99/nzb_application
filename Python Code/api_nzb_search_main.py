@@ -101,7 +101,18 @@ def text_capture():
     capture_date = entry_capture_date.get()
     capture_sid = entry_capture_series.get()
     txt_capture = Filename_Password_Capture(1)
-    txt_capture.database_upate(capture_date, capture_sid)
+    try:
+        id_list = txt_capture.database_upate(capture_date, capture_sid)
+        for key, value in id_list.items():
+            if not isinstance(value, tuple):
+                write_to_status(f'{key}: {value}\n')
+            else:
+                fn = value[0][:8] + "..." if len(value[0]) > 10 else value[0]
+                pw = value[1][:8] + "..." if len(value[1]) > 10 else value[1]
+                write_to_status(f'{key}: File: {fn} PW: {pw}\n')
+    except Exception as e:
+        print(f'Error updating filename/password: {e}')
+        write_to_status(f'Error updating filename/password: {e}\n')
     print(f'Text Capture Completed.')
     write_to_status(f'Text Capture Completed.\n')
 
@@ -109,32 +120,46 @@ def write_to_status(text):
     text_widget.insert(tk.END, text)
 
 root = tk.Tk()
+root.title("NZB Application")
+# root.iconbitmap("path/to/icon.ico")  # Replace "path/to/icon.ico" with the actual path to your icon file
 
-#root.configure(padx=10, pady=10)
 root.grid_columnconfigure(0, weight=1)
 root.grid_rowconfigure(0, weight=1)
 root.grid_rowconfigure(1, weight=1)
 root.grid_rowconfigure(2, weight=1)
+root.grid_rowconfigure(3, weight=1)
+
+# Add frame to holder title and icon
+frame_title = tk.Frame(root, bg="light blue", highlightthickness=2, highlightbackground="green")
+frame_title.grid(row=0, column=0, padx=10, pady=(10,5), sticky="nsew")
+frame_title.grid_columnconfigure(0, weight=1)
+# frame_title.grid_columnconfigure(1, weight=1)
+frame_title.grid_rowconfigure(0, weight=1)
+
 
 # Frame for nzb date and series
 frame_nzb = tk.Frame(root, bg="light blue")
-frame_nzb.grid(row=0, column=0, padx=10, pady=(10,5), sticky="nsew")
+frame_nzb.grid(row=1, column=0, padx=10, pady=(10,5), sticky="nsew")
 frame_nzb.grid_columnconfigure(0, weight=1)
 frame_nzb.grid_columnconfigure(1, weight=1)
 frame_nzb.grid_rowconfigure(0, weight=1)
 
 # Frame for filename and password capture
 frame_capture = tk.Frame(root, bg="light green")
-frame_capture.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
+frame_capture.grid(row=2, column=0, padx=10, pady=5, sticky="nsew")
 frame_capture.grid_columnconfigure(0, weight=1)
 frame_capture.grid_columnconfigure(1, weight=1)
 frame_capture.grid_rowconfigure(0, weight=1)
 
 # Frame for status messages
 frame_status = tk.Frame(root, bg="#D8BFD8")
-frame_status.grid(row=2, column=0, padx=10, pady=(5,10), sticky="nsew")
+frame_status.grid(row=3, column=0, padx=10, pady=(5,10), sticky="nsew")
 frame_status.grid_columnconfigure(0, weight=1)
 frame_status.grid_rowconfigure(0, weight=1)
+
+# Add label to title frame
+label_title = tk.Label(frame_title, text="NZB Application", font=('Verdana', 16), bg="light blue", justify="center")
+label_title.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 
 # Label: NZB Date
 label_date = tk.Label(frame_nzb, text="NZB Date:", font=('Arial', 14), bg="light blue")
@@ -162,7 +187,7 @@ submit_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
 
 # New separator line
 separator = tk.Frame(root, height=3, bd=1, relief='sunken')
-separator.grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky='ew')
+separator.grid(row=4, column=0, columnspan=2, padx=10, pady=10, sticky='ew')
 
 # Label: Capture Date
 label_capture_date = tk.Label(frame_capture, text="Capture Date:", font=('Arial', 14), anchor="w", justify="left", bg="light green")
@@ -210,7 +235,7 @@ text_widget.grid(row=1, column=0, columnspan=1, padx=(10,0), pady=(5,10), sticky
 scrollbar.config(command=text_widget.yview)
 
 # Add button below the text widget to clear the text widget's contents
-button_clear = tk.Button(root, text="Clear", command=lambda: text_widget.delete(1.0, tk.END), font=('Arial', 14))
-button_clear.grid(row=8, column=0, columnspan=2, padx=10, pady=10)
+button_clear = tk.Button(frame_status, text="Clear", command=lambda: text_widget.delete(1.0, tk.END), font=('Arial', 14))
+button_clear.grid(row=2, column=0, columnspan=3, padx=10, pady=10)
 
 root.mainloop()
