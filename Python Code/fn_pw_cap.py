@@ -67,16 +67,29 @@ class Filename_Password_Capture:
         self.cur.execute(self.str_sql, (self.nzb_date, self.nzb_series))
         self.row = self.cur.fetchall()
         print(f'Number of rows: {len(self.row)}')
-        for rw in self.row:
-            #Check to see if filename and password not empty
-            if rw[1] is None and rw[2] is None and rw[3] is not None:
-                self.str_sql_update = 'UPDATE movies SET filename=?, password=? WHERE (ID=?);'
-                fn = self.capture_filename_password02(rw[0])[0]
-                pw = self.capture_filename_password02(rw[0])[1]
 
-                self.cur.execute(self.str_sql_update, (fn, pw, rw[0]))
-                self.conn.commit()
+        rw_dict = {}  # Dictionary to store rw[0] as key and fn, pw as values
+
+        for rw in self.row:
+            # Check to see if filename and password not empty
+            if rw[3] is None:
+                rw_dict[rw[0]] = "No note"
+            else:
+                if rw[1] is None and rw[2] is None:
+                    self.str_sql_update = 'UPDATE movies SET filename=?, password=? WHERE (ID=?);'
+                    fn = self.capture_filename_password02(rw[0])[0]
+                    pw = self.capture_filename_password02(rw[0])[1]
+
+                    self.cur.execute(self.str_sql_update, (fn, pw, rw[0]))
+                    self.conn.commit()
+
+                    rw_dict[rw[0]] = (fn, pw)  # Add rw[0] as key and fn, pw as values to the dictionary
+                else:
+                    rw_dict[rw[0]] = "Existing values"  # Add rw[0] as key and "Existing values" as value to the dictionary
+
         self.conn.close()
+
+        return rw_dict  # Return the dictionary with rw[0] as key and fn, pw as values or "Existing values"
 
 try:
     cls = Filename_Password_Capture(1)

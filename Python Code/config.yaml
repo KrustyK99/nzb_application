@@ -8,7 +8,7 @@ re_pattern: "^(File Name|File Pass): (.+)$"
 
 # UI Default Date and Series ID
 ui_default_date: 2023-12-14
-ui_default_sid: 2
+ui_default_sid: 3
 
 # UI Default Date and Series ID for nzb Filename and Password Capture
 nzb_capture_date: 2023-12-14
