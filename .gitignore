@@ -164,3 +164,7 @@ cython_debug/
 nzb.db
 
 **/api_saved
+
+
+# Local log file
+**/app_log.md
