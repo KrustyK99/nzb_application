@@ -95,8 +95,10 @@ def main(nzb_date, nzb_series):
     conn.close()
         
     write_to_status(f'Number of records processed: {counter}\nNumber of files saved: {counter_saved}\n')
-    #curr_datetime = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
-    write_to_status(f'{curr_datetime}\n--------------------- E N D ---------------------\n')
+    end_datetime = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+    total_time = datetime.strptime(end_datetime, "%m/%d/%Y %H:%M:%S") - datetime.strptime(curr_datetime, "%m/%d/%Y %H:%M:%S")
+    write_to_status(f'Total run time: {total_time}\n')
+    write_to_status(f'{end_datetime}\n--------------------- E N D ---------------------\n')
 
 def submit():
     nzb_date = entry_date.get()
@@ -132,7 +134,9 @@ def text_capture():
         write_to_status(f'Error updating filename/password: {e}\n')
     print(f'Text Capture Completed.')
     write_to_status(f'Text Capture Completed.\n')
-    curr_datetime = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+    end_datetime = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+    total_time = datetime.strptime(end_datetime, "%m/%d/%Y %H:%M:%S") - datetime.strptime(curr_datetime, "%m/%d/%Y %H:%M:%S")
+    write_to_status(f'Total run time: {total_time}\n')
     write_to_status(f'{curr_datetime}\n--------------------- E N D ---------------------\n')
 
 def write_to_status(text):
@@ -202,7 +206,6 @@ entry_series.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
 entry_series.delete(0, tk.END)  # delete the current value
 default_sid = param_reader.get_parameter("ui_default_sid")
 entry_series.insert(0, default_sid)  # insert the new value
-
 # NZB Submit button
 submit_button = tk.Button(frame_nzb, text="Submit", command=submit, font=('Arial', 14))
 submit_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
@@ -230,10 +233,9 @@ entry_capture_series.grid(row=5, column=1, padx=10, pady=10, sticky="ew")
 default_entry_capture_series = param_reader.get_parameter("nzb_capture_sid")
 entry_capture_series.delete(0, tk.END)  # delete the current value
 entry_capture_series.insert(0, default_entry_capture_series)  # insert the new value
-
+# Button: Capture Filename and Password
 capture_button = tk.Button(frame_capture, text="Capture", command=text_capture, font=('Arial', 14))
 capture_button.grid(row=6, column=0, columnspan=2, padx=10, pady=10)
-
 
 # Add label to status frame
 label_status = tk.Label(frame_status, text="Status Messages", font=('Arial', 12), bg="#D8BFD8")
@@ -246,12 +248,6 @@ scrollbar.grid(row=1, column=2, padx=(0,10), pady=(6,10), sticky='ns')
 # Text Widget to show status messages so user can see what is happening.
 text_widget = tk.Text(frame_status, height=10, width=40, yscrollcommand=scrollbar.set)
 text_widget.grid(row=1, column=0, columnspan=1, padx=(10,0), pady=(5,10), sticky='nsew')
-
-
-# Configure the text widget to expand with the window; both horizontally and vertically.
-
-# root.grid_rowconfigure(7, weight=1)
-# root.grid_columnconfigure(0, weight=1)
 
 # Configure the Scrollbar to scroll the Text widget
 scrollbar.config(command=text_widget.yview)
