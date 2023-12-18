@@ -30,6 +30,11 @@ def main(nzb_date, nzb_series):
     cur = conn.cursor()
     cur.execute(str_sql, (nzb_date, nzb_series))
     row = cur.fetchall()
+
+    # Add variable curr_datetime to the status messages.
+    curr_datetime = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+    write_to_status(f'------------------- S T A R T -------------------\n{curr_datetime}\n')
+    
     print(f'Number of records from Database: {cur.rowcount}')
     write_to_status(f'Number of records from Database: {cur.rowcount}\n')
 
@@ -60,7 +65,7 @@ def main(nzb_date, nzb_series):
                     conn.commit()
                     counter_saved += 1
                     write_to_status(f'  ID: {rw[0]}, nzb saved!\n')
-                print(f'--------------------------------------------------------------')
+                print(f'-------------------------------------------------')
                 
             else:
                 nzb_filename = f'{date} {series} {rw[0]} {{{{{rw[4]}}}}}' # Filename where there IS no password.
@@ -80,16 +85,18 @@ def main(nzb_date, nzb_series):
                     write_to_status(f'  ID: {rw[0]}, nzb saved!\n')
                 #write_to_status(f'ID: {rw[0]}\n')
             print(f'NZB Filename: {nzb_filename}')
-            print(f'--------------------------------------------------------------')
+            print(f'-------------------------------------------------')
         except Exception as e:
             print(f"An error occurred: {e}")
         counter += 1
-    print(f'------------------------------- E N D -------------------------------')
+    
+    print(f'{curr_datetime}\n--------------------- E N D ---------------------\n')
     cur.close()
     conn.close()
         
-    write_to_status(f'Number of records processed: {counter}\nNumber of files saved: {counter_saved}\n-------------------- E N D --------------------\n')
-    
+    write_to_status(f'Number of records processed: {counter}\nNumber of files saved: {counter_saved}\n')
+    #curr_datetime = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+    write_to_status(f'{curr_datetime}\n--------------------- E N D ---------------------\n')
 
 def submit():
     nzb_date = entry_date.get()
@@ -101,23 +108,38 @@ def text_capture():
     capture_date = entry_capture_date.get()
     capture_sid = entry_capture_series.get()
     txt_capture = Filename_Password_Capture(1)
+    
+    # Add variable curr_datetime to the status messages.
+    curr_datetime = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+    write_to_status(f'------------------- S T A R T -------------------\n{curr_datetime}\n')
+
+    # write_to_status box that the text capture is starting and list capture data and series id
+    write_to_status(f'Text Capture Starting.\nCapture Date: {capture_date}\nCapture Series: {capture_sid}\n')
+    
     try:
         id_list = txt_capture.database_upate(capture_date, capture_sid)
         for key, value in id_list.items():
             if not isinstance(value, tuple):
-                write_to_status(f'{key}: {value}\n')
+                write_to_status(f'  {key}: {value}\n')
             else:
-                fn = value[0][:8] + "..." if len(value[0]) > 10 else value[0]
-                pw = value[1][:8] + "..." if len(value[1]) > 10 else value[1]
-                write_to_status(f'{key}: File: {fn} PW: {pw}\n')
+                fn = value[0][:7] + "..." if len(value[0]) > 10 else value[0]
+                pw = value[1][:7] + "..." if len(value[1]) > 10 else value[1]
+                write_to_status(f'  {key}: File: {fn} PW: {pw}\n')
+        # write to status the number of records processed
+        write_to_status(f'Number of records processed: {len(id_list)}\n')
     except Exception as e:
         print(f'Error updating filename/password: {e}')
         write_to_status(f'Error updating filename/password: {e}\n')
     print(f'Text Capture Completed.')
     write_to_status(f'Text Capture Completed.\n')
+    curr_datetime = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+    write_to_status(f'{curr_datetime}\n--------------------- E N D ---------------------\n')
 
 def write_to_status(text):
     text_widget.insert(tk.END, text)
+    # write text to app_log.md file
+    with open('app_log.md', 'a') as f:
+        f.write(text)
 
 root = tk.Tk()
 root.title("NZB Application")
