@@ -91,13 +91,14 @@ class Filename_Password_Capture:
 
         return rw_dict  # Return the dictionary with rw[0] as key and fn, pw as values or "Existing values"
 
-try:
-    cls = Filename_Password_Capture(1)
-    pr = ParameterReader("config.yaml")
-    pr.read_file()
-    #print(f'cls.db_type: {cls.db_type}')
-    #nzb_filename, nzb_password = cls.capture_filename_password()
-    #print(f'Filename, Password: {nzb_filename}, {nzb_password}')
-    cls.database_upate(pr.get_parameter("nzb_capture_date"), pr.get_parameter("nzb_capture_sid"))
-except Exception as e:
-    print(f'Error: {e}')
+if __name__ == "__main__":
+    try:
+        cls = Filename_Password_Capture(1)
+        pr = ParameterReader("config.yaml")
+        pr.read_file()
+        #print(f'cls.db_type: {cls.db_type}')
+        #nzb_filename, nzb_password = cls.capture_filename_password()
+        #print(f'Filename, Password: {nzb_filename}, {nzb_password}')
+        cls.database_upate(pr.get_parameter("nzb_capture_date"), pr.get_parameter("nzb_capture_sid"))
+    except Exception as e:
+        print(f'Error: {e}')
