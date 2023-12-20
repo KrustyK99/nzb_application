@@ -124,8 +124,8 @@ def text_capture():
             if not isinstance(value, tuple):
                 write_to_status(f'  {key}: {value}\n')
             else:
-                fn = value[0][:7] + "..." if len(value[0]) > 10 else value[0]
-                pw = value[1][:7] + "..." if len(value[1]) > 10 else value[1]
+                fn = value[0][:7] + "..." if len(value[0]) > 7 else value[0]
+                pw = value[1][:7] + "..." if len(value[1]) > 7 else value[1]
                 write_to_status(f'  {key}: File: {fn} PW: {pw}\n')
         # write to status the number of records processed
         write_to_status(f'Number of records processed: {len(id_list)}\n')
@@ -246,7 +246,7 @@ scrollbar = tk.Scrollbar(frame_status)
 scrollbar.grid(row=1, column=2, padx=(0,10), pady=(6,10), sticky='ns')
 
 # Text Widget to show status messages so user can see what is happening.
-text_widget = tk.Text(frame_status, height=10, width=40, yscrollcommand=scrollbar.set)
+text_widget = tk.Text(frame_status, height=15, width=50, yscrollcommand=scrollbar.set)
 text_widget.grid(row=1, column=0, columnspan=1, padx=(10,0), pady=(5,10), sticky='nsew')
 
 # Configure the Scrollbar to scroll the Text widget
