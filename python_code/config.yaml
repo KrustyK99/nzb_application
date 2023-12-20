@@ -7,9 +7,9 @@ api_request: https://api.nzbindex.com/api/v3/?key=
 re_pattern: "^(File Name|File Pass): (.+)$"
 
 # UI Default Date and Series ID
-ui_default_date: 2023-12-14
-ui_default_sid: 3
+ui_default_date: 2023-12-18
+ui_default_sid: 2
 
 # UI Default Date and Series ID for nzb Filename and Password Capture
-nzb_capture_date: 2023-12-14
-nzb_capture_sid: 4
+nzb_capture_date: 2023-12-18
+nzb_capture_sid: 2
