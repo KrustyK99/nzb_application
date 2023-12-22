@@ -1,6 +1,6 @@
 import re
-from nzb_search_db_connection import nzb_search_connection
-from parameterreader import ParameterReader
+from python_code.nzb_search_db_connection import nzb_search_connection
+from python_code.parameterreader import ParameterReader
 
 conn = None  # Declare conn as a global variable 
 
