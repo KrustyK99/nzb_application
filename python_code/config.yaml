@@ -13,3 +13,6 @@ ui_default_sid: 2
 # UI Default Date and Series ID for nzb Filename and Password Capture
 nzb_capture_date: 2023-12-18
 nzb_capture_sid: 2
+
+# Save directory for NZB Files
+nzb_save_directory: C:\Projects\nzb_application\python_code\api_saved
