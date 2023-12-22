@@ -1,14 +1,9 @@
 import requests
 import json
-from parameterreader import ParameterReader
+from python_code.parameterreader import ParameterReader
 import datetime
+import os
 
-pr = ParameterReader("config.yaml")
-
-try:
-    pr.read_file()
-except Exception as e: 
-    print(f'Problem reading the config file: {e}')
 
 class api_nzb_search:
     """
@@ -21,8 +16,16 @@ class api_nzb_search:
         Sets up the API key and request URL, checks the connection to the API server,
         and checks the number of API calls made.
         """
-        self.api_key = pr.get_parameter("api_key")
-        self.api_request = pr.get_parameter("api_request")
+
+        self.pr = ParameterReader("config.yaml")
+
+        try:
+            self.pr.read_file()
+        except Exception as e: 
+            print(f'Problem reading the config file: {e}')
+
+        self.api_key = self.pr.get_parameter("api_key")
+        self.api_request = self.pr.get_parameter("api_request")
 
         print('--------------------------------------------')
         
@@ -76,7 +79,8 @@ class api_nzb_search:
             response = requests.get(request_cmd)
             print(f'File download API response code: {response.status_code}')
 
-            open_string = fr'C:\Projects\nzb_application\Python Code\api_saved\{collection_name}.nzb'
+            nzb_save_directory = self.pr.get_parameter("nzb_save_directory")
+            open_string = os.path.join(nzb_save_directory, f'{collection_name}.nzb')
             print(f'NZB Filename: {open_string}')
             open(open_string, "wb").write(response.content)
             print(f'NZB file saved successfully.')
