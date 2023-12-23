@@ -16,3 +16,7 @@ nzb_capture_sid: 2
 
 # Save directory for NZB Files
 nzb_save_directory: C:\Projects\nzb_application\python_code\api_saved
+
+# Location of log file:
+log_file_name: app_log.md
+log_file_location: C:\Projects\nzb_application\
