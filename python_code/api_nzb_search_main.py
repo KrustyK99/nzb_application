@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
+import os
 from python_code.api_nzb_search import api_nzb_search
 from python_code.nzb_search_db_connection import nzb_search_connection
 from python_code.parameterreader import ParameterReader
@@ -217,7 +218,6 @@ class NZBApplication:
     def submit(self):
         nzb_date = self.entry_date.get()
         nzb_series = self.entry_series.get()
-        # messagebox.showinfo("Submitted", f"NZB Date: {nzb_date}\nNZB Series: {nzb_series}")
         self.nzb_main(nzb_date, nzb_series)
 
     def text_capture(self):    
@@ -256,8 +256,15 @@ class NZBApplication:
     def write_to_status(self,text):
         self.text_widget.insert(tk.END, text)
         # write text to app_log.md file
-        with open('app_log.md', 'a') as f:
-            f.write(text)
+
+        file_path = self.param_reader.get_parameter("log_file_location")
+        filename = self.param_reader.get_parameter("log_file_name")
+        full_filename = os.path.join(file_path, filename)
+        try:
+            with open(full_filename, 'a') as f:
+                f.write(text)
+        except IOError as e:
+            print(f"Error opening log file {full_filename}: {e}")
 
     def run(self):
         self.root.mainloop()
