@@ -1,0 +1,22 @@
+# Database Connection Type
+database_type: 1
+
+# NZB Planet API Key and URL
+api_key: f995d8d5732bf73306aedb29a8a844618d0fda48f15b773377fb4e0227300a26
+api_request: https://api.nzbindex.com/api/v3/?key=
+re_pattern: "^(File Name|File Pass): (.+)$"
+
+# UI Default Date and Series ID
+ui_default_date: 2023-12-18
+ui_default_sid: 2
+
+# UI Default Date and Series ID for nzb Filename and Password Capture
+nzb_capture_date: 2023-12-26
+nzb_capture_sid: 5
+
+# Save directory for NZB Files
+nzb_save_directory: C:\Projects\nzb_application\python_code\api_saved
+
+# Location of log file:
+log_file_name: app_log.md
+log_file_location: C:\Projects\nzb_application\
