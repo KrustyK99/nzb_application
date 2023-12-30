@@ -16,6 +16,8 @@ class nzb_search_connection:
             self.db_type_desc = "Business"            
         elif self.db_type == 4:
             self.db_type_desc = "Business-sandbox"
+        elif self.db_type == 5:
+            self.db_type_desc = "nzb_search_test"
         else:
             print("NZB Search: Unrecognized database type.")
             self.db_type_desc = "< NZB Search: Unrecognized DB Type >"
@@ -65,15 +67,28 @@ class nzb_search_connection:
             except mariadb.Error as e:
                 print(f"Error connecting to MariaDB Platform: {e}")
                 sys.exit(1)
+        elif self.db_type == 5:
+            try:
+                self.conn = mariadb.connect(
+                user="linc_dev",
+                password="D0gP1L3$1lv8rB1g",
+                host="192.168.2.252",
+                port=3307,
+                database="nzb_search_test")
+                return self.conn
+            except mariadb.Error as e:
+                print(f"Error connecting to MariaDB Platform: {e}")
+                sys.exit(1)
 
 def main():
     print("<< MAIN START >>")
-    cls = nzb_search_connection(1)
+    cls = nzb_search_connection(5)
     conn = cls.create_connection()
     cur = conn.cursor()
     cur.execute("select * from movies where id<50;")
     row = cur.fetchall()
-    print(cur.rowcount)
+    print(f'Database Description: {cls.db_type_desc}')
+    print(f'Number of rows: {cur.rowcount}')
     print("<< MAIN END >>")
 
 if __name__ == '__main__':
