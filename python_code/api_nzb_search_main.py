@@ -223,7 +223,8 @@ class NZBApplication:
     def text_capture(self):    
         capture_date = self.entry_capture_date.get()
         capture_sid = self.entry_capture_series.get()
-        txt_capture = Filename_Password_Capture(1)
+        conn = nzb_search_connection(1).create_connection()
+        txt_capture = Filename_Password_Capture(1, conn)
         
         # Add variable curr_datetime to the status messages.
         curr_datetime = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
