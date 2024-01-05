@@ -5,7 +5,7 @@ from python_code.parameterreader import ParameterReader
 conn = None  # Declare conn as a global variable 
 
 class Filename_Password_Capture:
-    def __init__(self, db_type):
+    def __init__(self, db_type, conn):
         """
         Initializes a new instance of the Filename_Password_Capture class.
 
@@ -17,7 +17,7 @@ class Filename_Password_Capture:
             RuntimeError: If the file cannot be read.
         """
         self.db_type = db_type
-        self.conn = nzb_search_connection(db_type).create_connection()        
+        self.conn = conn
     
     def capture_filename_password02(self, nzb_id):
         self.nzb_id = nzb_id
