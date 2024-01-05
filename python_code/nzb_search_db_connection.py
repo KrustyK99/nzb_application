@@ -18,6 +18,8 @@ class nzb_search_connection:
             self.db_type_desc = "Business-sandbox"
         elif self.db_type == 5:
             self.db_type_desc = "nzb_search_test"
+        elif self.db_type == 6:
+            self.db_type_desc = "nzb_search_empty"
         else:
             print("NZB Search: Unrecognized database type.")
             self.db_type_desc = "< NZB Search: Unrecognized DB Type >"
@@ -75,6 +77,18 @@ class nzb_search_connection:
                 host="192.168.2.252",
                 port=3307,
                 database="nzb_search_test")
+                return self.conn
+            except mariadb.Error as e:
+                print(f"Error connecting to MariaDB Platform: {e}")
+                sys.exit(1)
+        elif self.db_type == 6:
+            try:
+                self.conn = mariadb.connect(
+                user="linc_dev",
+                password="D0gP1L3$1lv8rB1g",
+                host="192.168.2.252",
+                port=3307,
+                database="nzb_search_empty")
                 return self.conn
             except mariadb.Error as e:
                 print(f"Error connecting to MariaDB Platform: {e}")
