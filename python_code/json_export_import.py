@@ -7,60 +7,84 @@ class DateTimeEncoder(json.JSONEncoder):
         if isinstance(obj, (datetime.date, datetime.datetime)):
             return obj.isoformat()
 
-def main():
-    cls = nzb_search_connection(1)
-    with cls.create_connection() as conn:
-        cur = conn.cursor()
-        cur.execute("select * from movies where ID >= 5418;")
-        rows = cur.fetchall()
-        print(f'Number of rows: {len(rows)}')
+class JSONExportImport:
+    def __init__(self, database_type=5):
+        #self.cls = nzb_search_connection(database_type)
+        pass
 
-        # Convert rows to list of dictionaries
-        columns = [desc[0] for desc in cur.description]
-        dict_rows = [dict(zip(columns, row)) for row in rows]
+    def _execute_query(self, conn, query, params=None):
+        pass
 
-        # Write to JSON file
-        with open('output.json', 'w') as f:
-            json.dump(dict_rows, f, cls=DateTimeEncoder)
+    def json_export(self, query="select * from movies where ID >= 5000;", database_type=1):
+        """
+        Export the results of a query to a json file
+        
+        Args:
+            query (str): The query to execute
+            database_type (int): The database type to connect to
+            1 = nzb search
+            2 = sqlite
+            3 = Business
+            4 = Business-sandbox
+            5 = nzb search test
+            6 = nzb search (empty)
+            7 = nzb search test (pymysql)
 
-# function to import json file into database table
-def import_json_to_table(filename='output.json', database_type=5):
-    """
-    Import json file into database table
+        Returns:
+            None
+        """
+        cls = nzb_search_connection(database_type)
+        with cls.create_connection() as conn:
+            cur = conn.cursor()
+            cur.execute(query)
+            rows = cur.fetchall()   
+            print(f'Number of rows: {len(rows)}')
 
-    Parameters
-    ----------
-    filename : str
-        Filename of json file to import
+            columns = [desc[0] for desc in cur.description]
+            dict_rows = [dict(zip(columns, row)) for row in rows]
 
-    database_type : int
-        Database type to use for connection
-        1 = nzb database
-        2 = SQLite
-        3 = Business database
-        4 = Business (Sandbox) database
-        5 = nzb_search test database (default)
-        6 = nzb_search empty database
+            with open('output.json', 'w') as f:
+                json.dump(dict_rows, f, cls=DateTimeEncoder, indent=4)
 
-    Returns
-    -------
-    None
-    """
-    # Create connection: The following creates a connection to the test database
-    cls = nzb_search_connection(database_type)
-    with cls.create_connection() as conn:
-        cur = conn.cursor()
+        print(f'File written: output.json')
+
+    def json_import(self, filename='output.json', database_type=7, reset_auto_increment=False):
+        """
+        Import a json file into the database
+        
+        Args:
+            filename (str): The filename to import
+            reset_auto_increment (bool): Whether to reset the auto increment value
+            
+        Returns:
+            None
+        """
+        cls = nzb_search_connection(database_type)
+
         with open(filename) as f:
             data = json.load(f)
-        for row in data:
-            print(f'row: {row}')
-            #cur.execute("insert into movies (download_date, description, filename, password, series_id, note, nzb_created, nzb_exception, dl_comments, movie_type, movie_url) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", row['download_date'], row['description'], row['filename'], row['password'], row['series_id'], row['note'], row['nzb_created'], row['nzb_exception'], row['dl_comments'], row['movie_type'], row['movie_url'])
-            cur.execute("insert into movies (download_date, description, filename, password, series_id, note, nzb_created, nzb_exception, dl_comments, movie_type, movie_url) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (row['download_date'], row['description'], row['filename'], row['password'], row['series_id'], row['note'], row['nzb_created'], row['nzb_exception'], row['dl_comments'], row['movie_type'], row['movie_url']))
-        conn.commit()
+        
+        with cls.create_connection() as conn:
+            cur = conn.cursor()
+            if reset_auto_increment:
+                cur.execute("ALTER TABLE movies AUTO_INCREMENT = 1;")
+            
+            query = "insert into movies (download_date, description, filename, password, series_id, note, nzb_created, nzb_exception, dl_comments, movie_type, movie_url) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
+            values = [
+            (row['download_date'], row['description'], row['filename'], row['password'], row['series_id'], row['note'], row['nzb_created'], row['nzb_exception'], row['dl_comments'], row['movie_type'], row['movie_url'])
+            for row in data
+            ]
+            
+            print(f'Number of rows: {len(values)}')
 
-import_json_to_table()
+            cur.executemany(query, values)
+            conn.commit()
 
-#if __name__ == "__main__":
-#    main()
+def main():
+    cls = JSONExportImport()
+    #cls.json_export(query="select * from movies where ID >= 5000;", database_type=1)
+    cls.json_import(database_type=7, reset_auto_increment=True )
 
+if __name__ == "__main__":
+    main()
