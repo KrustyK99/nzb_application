@@ -172,3 +172,5 @@ nzb.db
 **/scratch_pad
 
 **/config.yaml
+
+**/output.json
