@@ -2,6 +2,9 @@ import mariadb
 import sys
 import sqlite3
 from sqlite3 import Error
+import json
+import pymysql
+
 
 class nzb_search_connection:
     
@@ -20,6 +23,8 @@ class nzb_search_connection:
             self.db_type_desc = "nzb_search_test"
         elif self.db_type == 6:
             self.db_type_desc = "nzb_search_empty"
+        elif self.db_type == 7:
+            self.db_type_desc = "nzb_search_test_pymysql"
         else:
             print("NZB Search: Unrecognized database type.")
             self.db_type_desc = "< NZB Search: Unrecognized DB Type >"
@@ -93,6 +98,18 @@ class nzb_search_connection:
             except mariadb.Error as e:
                 print(f"Error connecting to MariaDB Platform: {e}")
                 sys.exit(1)
+        elif self.db_type == 7:
+            try:
+                self.conn = pymysql.connect(
+                host="192.168.2.252",
+                user="linc_dev",
+                password="D0gP1L3$1lv8rB1g",
+                db="nzb_search_test",
+                port=3307)
+                return self.conn
+            except pymysql.Error as e:
+                print(f"Error connecting to MariaDB Platform (pymysql): {e}")
+                sys.exit(1)       
 
 def main():
     print("<< MAIN START >>")
